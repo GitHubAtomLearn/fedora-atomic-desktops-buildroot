@@ -90,7 +90,6 @@ jobs:
           containerfiles: ${{ env.CONTAINERFILE }}
           oci: true
           build-args: |
-            RELEASE=${{ matrix.release }}
             BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
             BASEIMAGE_TAG=${{ matrix.release }}
             COSIGN_REPOSITORY=${{ env.COSIGN_REPOSITORY }}
@@ -100,7 +99,7 @@ jobs:
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
           extra-args: |
             --skip-unused-stages=false
-            --security-opt=label=disable
+            --security-opt=label=type:unconfined_t
             --volume /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}:/run/src
 
       - name: "Push to Container Registry"
@@ -169,7 +168,6 @@ jobs:
           containerfiles: ${{ env.CONTAINERFILE }}
           oci: true
           build-args: |
-            RELEASE=${{ matrix.release }}
             BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
             BASEIMAGE_TAG=${{ matrix.release }}
             COSIGN_REPOSITORY=${{ env.COSIGN_REPOSITORY }}
@@ -179,7 +177,7 @@ jobs:
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
           extra-args: |
             --skip-unused-stages=false
-            --security-opt=label=disable
+            --security-opt=label=type:unconfined_t
             --volume /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}:/run/src
 
       - name: "Push to Container Registry"
