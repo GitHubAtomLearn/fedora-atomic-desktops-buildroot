@@ -101,7 +101,8 @@ jobs:
           extra-args: |
             --skip-unused-stages=false
             --security-opt=label=disable
-            --volume /__w/containerfiles/containerfiles:/run/src
+            --volume /__w:/run/src
+            # --volume /__w/containerfiles/containerfiles:/run/src
 
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
