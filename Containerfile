@@ -57,12 +57,12 @@ RUN --mount=type=cache,rw,target=/cache \
     rm --recursive --force /tmp/* /var/lib/dnf/* /var/cache/dnf/* /var/log/*
 EORUN
 
-# Rechunk
-FROM ${CHUNKAH_REPOSITORY}:${CHUNKAH_TAG} AS chunkah
+# # Rechunk
+# FROM ${CHUNKAH_REPOSITORY}:${CHUNKAH_TAG} AS chunkah
 
-RUN --mount=from=builder,src=/,target=/chunkah,ro \
-    --mount=type=bind,target=/run/src,rw \
-        chunkah build > /run/src/buildroot.ociarchive
+# RUN --mount=from=builder,src=/,target=/chunkah,ro \
+#     --mount=type=bind,target=/run/src,rw \
+#         chunkah build > /run/src/buildroot.ociarchive
 
-# Final image
-FROM oci-archive:buildroot.ociarchive
+# # Final image
+# FROM oci-archive:buildroot.ociarchive
