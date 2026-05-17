@@ -104,7 +104,9 @@ jobs:
 
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') \
+          && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
@@ -183,7 +185,9 @@ jobs:
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
         id: "push"
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') \
+          && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
@@ -203,14 +207,18 @@ jobs:
     steps:
       - name: "Login to Container Registry"
         uses: redhat-actions/podman-login@v1
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') \
+          && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
 
       - name: "Create multi-arch manifest"
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') \
+          && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
         shell: bash
         run: |
           set -xeuo pipefail
@@ -223,7 +231,9 @@ jobs:
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
         id: "push"
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') \
+          && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
@@ -233,10 +243,14 @@ jobs:
 
       - name: "Setup cosign"
         uses: sigstore/cosign-installer@v3.10.0
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') \
+          && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
 
       - name: "Sign container image"
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') \
+          && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
         run: |
           cosign sign --yes --recursive=true --key env://COSIGN_PRIVATE_KEY ${{ env.REGISTRY }}/${{ env.NAME }}@${{ steps.push.outputs.digest }}
         env:
