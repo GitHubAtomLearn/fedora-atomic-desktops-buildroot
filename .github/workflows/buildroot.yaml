@@ -103,8 +103,6 @@ jobs:
             --security-opt=label=disable
             --volume /__w:/run/src
 
-            # --volume /__w/containerfiles/containerfiles:/run/src
-
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
         if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
