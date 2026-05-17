@@ -101,7 +101,7 @@ jobs:
           extra-args: |
             --skip-unused-stages=false
             --security-opt=label=disable
-            --volume /__w/${{ github.repository }}:/run/src
+            --volume ${{ github.workspace }}:/run/src
 
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
@@ -180,7 +180,7 @@ jobs:
           extra-args: |
             --skip-unused-stages=false
             --security-opt=label=disable
-            --volume /__w/${{ github.repository }}:/run/src
+            --volume ${{ github.workspace }}:/run/src
 
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
