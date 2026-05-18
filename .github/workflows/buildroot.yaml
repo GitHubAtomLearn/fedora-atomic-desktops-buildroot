@@ -225,19 +225,6 @@ jobs:
       matrix:
         release: ['rawhide', '44', '43']
     steps:
-      - name: "Setup cosign"
-        uses: sigstore/cosign-installer@v3.10.0
-        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-
-      - name: "Login to Container Registry"
-        uses: redhat-actions/podman-login@v1
-        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.BOT_USERNAME }}
-          password: ${{ secrets.BOT_SECRET }}
-          auth_file_path: /tmp/auth.json
-
       - name: "Create multi-arch manifest"
         # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         shell: bash
@@ -263,6 +250,19 @@ jobs:
           extra-args: |
             --compression-format=zstd
             --compression-level=20
+
+      - name: "Login to Container Registry"
+        uses: redhat-actions/podman-login@v1
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+          auth_file_path: /tmp/auth.json
+
+      - name: "Setup cosign"
+        uses: sigstore/cosign-installer@v3.10.0
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
 
       - name: "Sign container image"
         # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
