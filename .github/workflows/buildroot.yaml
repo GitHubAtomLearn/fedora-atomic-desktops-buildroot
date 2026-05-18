@@ -189,6 +189,15 @@ jobs:
             --security-opt=label=type:unconfined_t
             --volume /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}:/run/src
 
+      - name: "Login to Container Registry"
+        uses: redhat-actions/podman-login@v1
+        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+          auth_file_path: /tmp/auth.json
+
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
         id: "push"
