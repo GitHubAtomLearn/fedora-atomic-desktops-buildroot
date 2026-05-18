@@ -232,8 +232,9 @@ jobs:
         shell: bash
         run: |
           set -xeuo pipefail
-          buildah manifest create "${REGISTRY}/${NAME}:${RELEASE}" \
-            "${REGISTRY}/${NAME}:${RELEASE}-x86_64"
+          buildah manifest create \
+            "${REGISTRY}/${NAME}:${RELEASE}" \
+            "${REGISTRY}/${NAME}:${RELEASE}-x86_64" \
             "${REGISTRY}/${NAME}:${RELEASE}-aarch64"
         env:
           RELEASE: ${{ matrix.release }}
