@@ -109,6 +109,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
+          auth_file_path: /tmp/auth.json
 
       - name: "Push to Container Registry"
         uses: redhat-actions/push-to-registry@v2
