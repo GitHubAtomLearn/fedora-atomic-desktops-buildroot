@@ -122,6 +122,7 @@ jobs:
           tags: ${{ matrix.release }}-x86_64
           extra-args: |
             --compression-format=zstd
+            --compression-level=20
 
   build-aarch64:
     runs-on: "ubuntu-24.04-arm"
@@ -212,6 +213,7 @@ jobs:
           tags: ${{ matrix.release }}-aarch64
           extra-args: |
             --compression-format=zstd
+            --compression-level=20
 
   merge:
     runs-on: "ubuntu-24.04"
@@ -260,6 +262,7 @@ jobs:
           tags: ${{ matrix.release }}
           extra-args: |
             --compression-format=zstd
+            --compression-level=20
 
       - name: "Sign container image"
         # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
