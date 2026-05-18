@@ -92,8 +92,8 @@ jobs:
           build-args: |
             BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
             BASEIMAGE_TAG=${{ matrix.release }}
-            COSIGN_REPOSITORY="ghcr.io/sigstore/cosign/cosign"
-            COSIGN_TAG="v2.6.2"
+            COSIGN_REPOSITORY=ghcr.io/sigstore/cosign/cosign
+            COSIGN_TAG=v2.6.2
             CHUNKAH_REPOSITORY=${{ env.CHUNKAH_REPOSITORY }}
             CHUNKAH_TAG=${{ env.CHUNKAH_TAG }}
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
@@ -182,8 +182,8 @@ jobs:
           build-args: |
             BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
             BASEIMAGE_TAG=${{ matrix.release }}
-            COSIGN_REPOSITORY="ghcr.io/sigstore/cosign/cosign"
-            COSIGN_TAG="v2.6.2"
+            COSIGN_REPOSITORY=ghcr.io/sigstore/cosign/cosign
+            COSIGN_TAG=v2.6.2
             CHUNKAH_REPOSITORY=${{ env.CHUNKAH_REPOSITORY }}
             CHUNKAH_TAG=${{ env.CHUNKAH_TAG }}
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
