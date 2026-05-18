@@ -10,14 +10,13 @@ ARG COSIGN_TAG=overridden
 ARG CHUNKAH_REPOSITORY=overridden
 ARG CHUNKAH_TAG=overridden
 
-ARG NODEJS_VERSION=overridden
-
 FROM ${COSIGN_REPOSITORY}:${COSIGN_TAG} AS cosign-bin
 
 FROM ${BASEIMAGE_REPOSITORY}:${BASEIMAGE_TAG} AS builder
 
 COPY --from=cosign-bin /ko-app/cosign /usr/bin/cosign
 
+ARG NODEJS_VERSION=overridden
 ENV NODEJS_VERSION=${NODEJS_VERSION}
 
 # Install the required packages
