@@ -8,8 +8,8 @@ env:
   REGISTRY: "quay.io/operatement"
   NAME: "fedora-atomic-desktops-buildroot"
   BASEIMAGE_REPOSITORY: "quay.io/fedora/fedora-minimal"
-  COSIGN_REPOSITORY: "ghcr.io/sigstore/cosign/cosign"
-  COSIGN_TAG: "v2.6.2"
+  # COSIGN_REPOSITORY: "ghcr.io/sigstore/cosign/cosign"
+  # COSIGN_TAG: "v2.6.2"
   CHUNKAH_REPOSITORY: "quay.io/coreos/chunkah"
   CHUNKAH_TAG: "dev"
   NODEJS_VERSION: "24"
@@ -92,8 +92,8 @@ jobs:
           build-args: |
             BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
             BASEIMAGE_TAG=${{ matrix.release }}
-            COSIGN_REPOSITORY=${{ env.COSIGN_REPOSITORY }}
-            COSIGN_TAG=${{ env.COSIGN_TAG }}
+            COSIGN_REPOSITORY="ghcr.io/sigstore/cosign/cosign"
+            COSIGN_TAG="v2.6.2"
             CHUNKAH_REPOSITORY=${{ env.CHUNKAH_REPOSITORY }}
             CHUNKAH_TAG=${{ env.CHUNKAH_TAG }}
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
@@ -101,6 +101,9 @@ jobs:
             --skip-unused-stages=false
             --security-opt=label=type:unconfined_t
             --volume /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}:/run/src
+          
+          # COSIGN_REPOSITORY=${{ env.COSIGN_REPOSITORY }}
+          # COSIGN_TAG=${{ env.COSIGN_TAG }}
 
       - name: "Login to Container Registry"
         uses: redhat-actions/podman-login@v1
@@ -179,8 +182,8 @@ jobs:
           build-args: |
             BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
             BASEIMAGE_TAG=${{ matrix.release }}
-            COSIGN_REPOSITORY=${{ env.COSIGN_REPOSITORY }}
-            COSIGN_TAG=${{ env.COSIGN_TAG }}
+            COSIGN_REPOSITORY="ghcr.io/sigstore/cosign/cosign"
+            COSIGN_TAG="v2.6.2"
             CHUNKAH_REPOSITORY=${{ env.CHUNKAH_REPOSITORY }}
             CHUNKAH_TAG=${{ env.CHUNKAH_TAG }}
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
