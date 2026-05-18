@@ -34,8 +34,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-x86_64:
-    runs-on: "ubuntu-24.04"
+  build:
+    runs-on: "${{ matrix.runner }}"
     container:
       image: quay.io/containers/podman:latest
       options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse \
@@ -44,7 +44,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        arch: ['x86_64', 'aarch64']
         release: ['rawhide', '44', '43']
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Prepare the graphroot storage location
         shell: bash
@@ -86,97 +92,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.NAME }}
-          tags: ${{ matrix.release }}-x86_64
-          containerfiles: ${{ env.CONTAINERFILE }}
-          oci: true
-          build-args: |
-            BASEIMAGE_REPO=${{ env.BASEIMAGE_REPO }}
-            BASEIMAGE_TAG=${{ matrix.release }}
-            COSIGN_REPO=${{ env.COSIGN_REPO }}
-            COSIGN_TAG=${{ env.COSIGN_TAG }}
-            CHUNKAH_REPO=${{ env.CHUNKAH_REPO }}
-            CHUNKAH_TAG=${{ env.CHUNKAH_TAG }}
-            NODEJS_VERSION=${{ env.NODEJS_VERSION }}
-          extra-args: |
-            --skip-unused-stages=false
-            --security-opt=label=type:unconfined_t
-            --volume /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}:/run/src
-
-      - name: "Login to Container Registry"
-        uses: redhat-actions/podman-login@v1
-        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.BOT_USERNAME }}
-          password: ${{ secrets.BOT_SECRET }}
-          auth_file_path: /tmp/auth.json
-
-      - name: "Push to Container Registry"
-        uses: redhat-actions/push-to-registry@v2
-        # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.BOT_USERNAME }}
-          password: ${{ secrets.BOT_SECRET }}
-          image: ${{ env.NAME }}
-          tags: ${{ matrix.release }}-x86_64
-          extra-args: |
-            --compression-format=zstd
-            --compression-level=20
-
-  build-aarch64:
-    runs-on: "ubuntu-24.04-arm"
-    container:
-      image: quay.io/containers/podman:latest
-      options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse \
-        --volume /:/run/host:rw --volume /mnt:/mnt --volume /var/run/docker.sock:/var/run/docker.sock \
-        --workdir=/mnt"
-    strategy:
-      fail-fast: false
-      matrix:
-        release: ['rawhide', '44', '43']
-    steps:
-      - name: Prepare the graphroot storage location
-        shell: bash
-        run: |
-          # Bind mount /mnt/containers over /var/lib/containers
-          set -xeuo pipefail
-
-          sudo ls -lah /var/lib/containers
-          sudo mkdir --parents /mnt/containers
-          sudo mount --bind /mnt/containers /var/lib/containers
-
-          echo -e "\nAvailable disk storage:"
-          sudo df --human-readable /var/lib/containers
-          sudo df --human-readable /mnt/containers
-          sudo lsblk --output NAME,PATH,TYPE,FSTYPE,SIZE,FSSIZE,FSUSED,FSAVAIL,FSUSE%,MOUNTPOINTS
-
-      - name: Fixup GitHub homedir
-        run: |
-          set -xeuo pipefail
-          mkdir -p /github/home/.docker/
-
-      - name: Install tools in the container
-        run: |
-          set -xeuo pipefail
-          export FORCE_COLUMNS=134
-          rm --force /etc/yum.repos.d/fedora-cisco-openh264.repo
-          dnf --refresh install --assumeyes --allowerasing \
-            --no-allow-downgrade --no-docs --setopt=tsflags=nodocs \
-            --setopt=install_weak_deps=False --best \
-            --exclude container-selinux \
-              buildah skopeo
-          dnf clean all
-          rm --recursive --force /tmp /var/lib/dnf /var/cache /var/log
-
-      - name: "Checkout repo"
-        uses: actions/checkout@v6
-
-      - name: "Build container image"
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: ${{ env.NAME }}
-          tags: ${{ matrix.release }}-aarch64
+          tags: ${{ matrix.release }}-${{ matrix.arch }}
           containerfiles: ${{ env.CONTAINERFILE }}
           oci: true
           build-args: |
@@ -210,7 +126,7 @@ jobs:
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
           image: ${{ env.NAME }}
-          tags: ${{ matrix.release }}-aarch64
+          tags: ${{ matrix.release }}-${{ matrix.arch }}
           extra-args: |
             --compression-format=zstd
             --compression-level=20
@@ -218,8 +134,7 @@ jobs:
   merge:
     runs-on: "ubuntu-24.04"
     needs:
-      - "build-x86_64"
-      - "build-aarch64"
+      - "build"
     strategy:
       fail-fast: false
       matrix:
