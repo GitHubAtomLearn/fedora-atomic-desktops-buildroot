@@ -7,10 +7,10 @@ env:
   CONTAINERFILE: "./Containerfile"
   REGISTRY: "quay.io/operatement"
   NAME: "fedora-atomic-desktops-buildroot"
-  BASEIMAGE_REPOSITORY: "quay.io/fedora/fedora-minimal"
-  # COSIGN_REPOSITORY: "ghcr.io/sigstore/cosign/cosign"
-  # COSIGN_TAG: "v2.6.2"
-  CHUNKAH_REPOSITORY: "quay.io/coreos/chunkah"
+  BASEIMAGE_REPO: "quay.io/fedora/fedora-minimal"
+  COSIGN_REPO: "ghcr.io/sigstore/cosign/cosign"
+  COSIGN_TAG: "v2.6.2"
+  CHUNKAH_REPO: "quay.io/coreos/chunkah"
   CHUNKAH_TAG: "dev"
   NODEJS_VERSION: "24"
 
@@ -90,20 +90,17 @@ jobs:
           containerfiles: ${{ env.CONTAINERFILE }}
           oci: true
           build-args: |
-            BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
+            BASEIMAGE_REPO=${{ env.BASEIMAGE_REPO }}
             BASEIMAGE_TAG=${{ matrix.release }}
-            COSIGN_REPOSITORY=ghcr.io/sigstore/cosign/cosign
-            COSIGN_TAG=v2.6.2
-            CHUNKAH_REPOSITORY=${{ env.CHUNKAH_REPOSITORY }}
+            COSIGN_REPO=${{ env.COSIGN_REPO }}
+            COSIGN_TAG=${{ env.COSIGN_TAG }}
+            CHUNKAH_REPO=${{ env.CHUNKAH_REPO }}
             CHUNKAH_TAG=${{ env.CHUNKAH_TAG }}
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
           extra-args: |
             --skip-unused-stages=false
             --security-opt=label=type:unconfined_t
             --volume /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}:/run/src
-          
-          # COSIGN_REPOSITORY=${{ env.COSIGN_REPOSITORY }}
-          # COSIGN_TAG=${{ env.COSIGN_TAG }}
 
       - name: "Login to Container Registry"
         uses: redhat-actions/podman-login@v1
@@ -180,11 +177,11 @@ jobs:
           containerfiles: ${{ env.CONTAINERFILE }}
           oci: true
           build-args: |
-            BASEIMAGE_REPOSITORY=${{ env.BASEIMAGE_REPOSITORY }}
+            BASEIMAGE_REPO=${{ env.BASEIMAGE_REPO }}
             BASEIMAGE_TAG=${{ matrix.release }}
-            COSIGN_REPOSITORY=ghcr.io/sigstore/cosign/cosign
-            COSIGN_TAG=v2.6.2
-            CHUNKAH_REPOSITORY=${{ env.CHUNKAH_REPOSITORY }}
+            COSIGN_REPO=${{ env.COSIGN_REPO }}
+            COSIGN_TAG=${{ env.COSIGN_TAG }}
+            CHUNKAH_REPO=${{ env.CHUNKAH_REPO }}
             CHUNKAH_TAG=${{ env.CHUNKAH_TAG }}
             NODEJS_VERSION=${{ env.NODEJS_VERSION }}
           extra-args: |
@@ -223,7 +220,6 @@ jobs:
         release: ['rawhide', '44', '43']
     steps:
       - name: "Setup cosign"
-        # uses: sigstore/cosign-installer@v4.1.2
         uses: sigstore/cosign-installer@v3.10.0
         # if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
 

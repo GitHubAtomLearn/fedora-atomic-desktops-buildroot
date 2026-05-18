@@ -1,18 +1,18 @@
 # SPDX-FileCopyrightText: Fedora Atomic Desktops maintainers
 # SPDX-License-Identifier: MIT
 
-ARG BASEIMAGE_REPOSITORY=overridden
+ARG BASEIMAGE_REPO=overridden
 ARG BASEIMAGE_TAG=overridden
 
-ARG COSIGN_REPOSITORY=overridden
+ARG COSIGN_REPO=overridden
 ARG COSIGN_TAG=overridden
 
-ARG CHUNKAH_REPOSITORY=overridden
+ARG CHUNKAH_REPO=overridden
 ARG CHUNKAH_TAG=overridden
 
-FROM ${COSIGN_REPOSITORY}:${COSIGN_TAG} AS cosign-bin
+FROM ${COSIGN_REPO}:${COSIGN_TAG} AS cosign-bin
 
-FROM ${BASEIMAGE_REPOSITORY}:${BASEIMAGE_TAG} AS builder
+FROM ${BASEIMAGE_REPO}:${BASEIMAGE_TAG} AS builder
 
 COPY --from=cosign-bin /ko-app/cosign /usr/bin/cosign
 
@@ -57,7 +57,7 @@ RUN --mount=type=cache,rw,target=/cache \
 EORUN
 
 # Rechunk
-FROM ${CHUNKAH_REPOSITORY}:${CHUNKAH_TAG} AS chunkah
+FROM ${CHUNKAH_REPO}:${CHUNKAH_TAG} AS chunkah
 
 RUN --mount=from=builder,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
